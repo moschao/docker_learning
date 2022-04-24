@@ -637,7 +637,7 @@ Options:
 
 ```shell
 # 停止打印的那个容器
-[root@192 ~]# docker stop 54002c5c42f2
+# docker stop 54002c5c42f2
 54002c5c42f2
 ```
 
@@ -847,6 +847,24 @@ bootfs：boot file system
 
 rootfs：root file system
 
+Linux 操作系统由内核空间和用户空间组成。如下图所示：
+
+![02e751bc0c271d1f84d495c0454059eb](Docker.assets/02e751bc0c271d1f84d495c0454059eb.jpg)
+
+**rootfs**
+
+内核空间是 kernel，Linux 刚启动时会加载 bootfs 文件系统，之后 bootfs 会被卸载掉。
+
+用户空间的文件系统是 rootfs，包含我们熟悉的 /dev, /proc, /bin 等目录。
+
+对于 base 镜像来说，底层直接用 Host 的 kernel，自己只需要提供 rootfs 就行了。
+
+而对于一个精简的 OS，rootfs 可以很小，只需要包括最基本的命令、工具和程序库就可以了。
+
+平时安装的 CentOS 除了 rootfs 还会选装很多软件、服务、图形桌面等，需要好几个 G 。
+
+
+
 ![image-20200618140907894](Docker.assets/image-20200618140907894.png)
 
 
@@ -855,29 +873,98 @@ rootfs：root file system
 
 ![image-20200618140932621](Docker.assets/image-20200618140932621.png)
 
-![image-20200618141014511](Docker.assets/image-20200618141014511.png)
 
-
-
-![image-20200618153329894](Docker.assets/image-20200618153329894.png)
 
 Docker镜像都是只读的，当容器启动时，一个新的可写层被加到镜像的顶部，这一层就是我们通常说的容器层，容器层之下的都叫镜像层
 
 ![image-20200618153855605](Docker.assets/image-20200618153855605.png)
 
+最小的镜像  hello-world镜像
+
+![WX20220424-220936](Docker.assets/WX20220424-220936.png)
+
+通过docker run 运行
+
+![WX20220424-221150](Docker.assets/WX20220424-221150.png)
+
+Dockerfile 是镜像的描述文件，定义了如何构建 Docker 镜像。
+
+hello-world 的 Dockerfile 内容如下：
+
+![WX20220424-221653](Docker.assets/WX20220424-221653.png)
+
+只有三条指令。
+
+1. FROM scratch
+   此镜像是从白手起家，从 0 开始构建。
+2. COPY hello /
+   将文件“hello”复制到镜像的根目录。
+3. CMD ["/hello"]
+   容器启动时，执行 /hello
+
+镜像 hello-world 中就只有一个可执行文件 “hello”，其功能就是打印出 “Hello from Docker ” 。
+
+/hello 就是文件系统的全部内容，连最基本的 /bin，/usr, /lib, /dev 都没有。
 
 
-### commit提交镜像
 
-```shell
-docker commit # 提交容器成为一个新的副本
-docker commit -m="提交的描述信息" -a="作者" 容器id 目标镜像名：[TAG]
-```
+#### base镜像
 
-```shell
-docker images
-docker run -it -p 8080:8080 tomcat
-```
+能提供一个基本的操作系统环境，可以根据需要安装和配置软件，这样的镜像叫做 base 镜像。
+
+**base 镜像提供的是最小安装的 Linux 发行版**。
+
+Centos的Dockerfile内容为
+
+![WX20220424-223457](Docker.assets/WX20220424-223457.png)
+
+第二行 ADD 指令添加到镜像的 tar 包就是 CentOS 7 的 rootfs。在制作镜像时，这个 tar 包会自动解压到 / 目录下，生成 /dev, /porc, /bin 等目录。
+
+
+
+### Docker 提供了两种构建镜像的方法：
+
+1. docker commit 命令
+
+2. Dockerfile 构建文件
+
+##### docker commit 命令是创建新镜像最直观的方法，其过程包含三个步骤：
+
+1. 运行容器
+
+2. 修改容器
+
+3. 将容器保存为新的镜像
+
+   练习：在 ubuntu base 镜像中安装 vi 并保存为新镜像。
+
+   1. 第一步， 运行容器 
+
+      ![WX20220424-224317](Docker.assets/WX20220424-224317.png)
+
+   2. 在镜像中新增文件
+
+      ![WX20220424-230121](Docker.assets/WX20220424-230121.png)
+
+      3. 保存为新镜像
+
+         ![WX20220424-230415](Docker.assets/WX20220424-230415.png)
+
+         sweet_chaplygin是 Docker为容器随机分配的名字
+
+         
+
+         执行 docker commit 命令将容器保存为镜像
+
+      ![WX20220424-230831](Docker.assets/WX20220424-230831.png)
+
+      新镜像名字为ubuntu_add_test.cpp
+
+      查看新镜像的属性。
+
+      ![WX20220424-231053](Docker.assets/WX20220424-231053.png)
+
+      
 
 ## 容器数据卷
 
