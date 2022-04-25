@@ -997,7 +997,7 @@ docker run -it -v -p
 # -p 主机端口
 ```
 
-![image-20200618163659503](Docker.assets/image-20200618163659503.png)
+![image-20200618163659503](Docker.assets/WX20220425-224737.png)
 
 新开一个窗口
 
@@ -1005,107 +1005,33 @@ docker run -it -v -p
 docker inspect 容器id
 ```
 
+![WX20220425-225059](Docker.assets/WX20220425-225059.png)
 
 
-![image-20200618163938466](Docker.assets/image-20200618163938466.png)
 
 找到挂载信息Mounts
 
-![image-20200618164148642](Docker.assets/image-20200618164148642.png)
+![image-20200618164148642](Docker.assets/WX20220425-225545.png)
 
 测试
 
-![image-20200618164818624](Docker.assets/image-20200618164818624.png)
+![image-20200618164818624](Docker.assets/WX20220425-230244.png)
 
 容器停止后，修改主机文件，再启动容器的时候，数据同样改变
 
 双向同步
 
-### 实战安装mysql
 
-MySQL的数据持久化命令
 
-```shell
-docker search mysql
+### 匿名挂载
 
-# 拉取
-docker pull mysql:5.7
+![image-20200618203452205](Docker.assets/WX20220425-232814.png)
 
-# 挂载
-docker run -d -p 3310:3306 -v /home/mysql/conf:/etc/mysql/conf.d -v /home/mysql/data:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=123456 --name mysql01 mysql5.7
+默认挂载到容器/var/lib/docker/volumes下
 
--d 后台运行
--p 端口映射
--v 卷挂载
--e 环境配置 安装启动mysql需要配置密码
---name 容器名字
 
-```
 
-![image-20200618171353336](Docker.assets/image-20200618171353336.png)
-
-链接测试：打开SQLyog
-
-![image-20200618173234347](Docker.assets/image-20200618173234347.png)
-
-点 测试链接
-
-![image-20200618173300551](Docker.assets/image-20200618173300551.png)
-
-点 链接
-
-![image-20200618173729692](Docker.assets/image-20200618173729692.png)
-
-### 具名和匿名挂载
-
-【视频书签：https://www.bilibili.com/video/BV1og4y1q7M4?p=23，有点累了，跟不动了，这两天运动太少了，有点颓】
-
-![image-20200618203452205](Docker.assets/image-20200618203452205.png)
-
-![image-20200618203744983](Docker.assets/image-20200618203744983.png)
-
-### 
-
-DockerFile使用来构建docker镜像的文件
-
-![image-20200618211547398](Docker.assets/image-20200618211547398.png)
-
-> kas:
-> 没有安装吧？
->
-> kas:
-> 安装一下就可以了
->
-> py9001021曾叙坚:
-> centos 默认使用vi写内容，vim需要下载
->
-> py9001021曾叙坚:
-> 是的，需要下载vim才能使用
->
-> YF:
-> 配置可以改下，字体就很炫酷了
->
-> 都建民:
-> 用vi  试试
->
-> 都建民:
-> 你没有安装vim
->
-> 都建民:
-> yum install vim
->
-> 都建民:
-> 试试这个命令
-
-```shell
-yum install vim # 编辑文件的，没有装一下
-```
-
-![image-20200618211516566](Docker.assets/image-20200618211516566.png)
-
-安装完之后就可以运行这个命令了
-
-![image-20200618211803012](Docker.assets/image-20200618211803012.png)
+#### DockerFile使用来构建docker镜像的文件
 
 ```shell
 # 镜像是一层一层的，脚本是一行一行的
@@ -1121,127 +1047,34 @@ CMD /bin/bash
 
 ```
 
-![image-20200618211023834](Docker.assets/image-20200618211023834.png)
-
-想保存并退出
-
->Wesley.:
->shift  加  冒号
+![image-20200618211023834](Docker.assets/WX20220425-234221.png)
 
 
-
-![image-20200618211318410](Docker.assets/image-20200618211318410.png)
 
 ```shell
-cat dockerfile1
+cat Dockerfile
 
-docker build -f dockerfile1 -t padaxing/centos:1.0 .  # 最后的点很重要 镜像名不能有/
+docker build -f Dockerfile -t max/centos:1.0 .  # 最后的点很重要 镜像名不能有/
 ```
 
-![image-20200618212936481](Docker.assets/image-20200618212936481.png)
+![image-20200618212936481](Docker.assets/WX20220425-234814.png)
 
 ```shell
-docker images
-```
-
-![image-20200618213310752](Docker.assets/image-20200618213310752.png)
-
 启动生成的镜像
-
-![image-20200618220658979](Docker.assets/image-20200618220658979.png)
-
-在容器内部创建一个文件
-
-![image-20200618221801103](Docker.assets/image-20200618221801103.png)
-
-查看Mounts，Source对应容器外目录，匿名挂载卷
-
-![image-20200618221837895](Docker.assets/image-20200618221837895.png)
-
-测试一下，在container volume01下生成文件
-
-![image-20200618222224352](Docker.assets/image-20200618222224352.png)
-
-在主机挂载路径下，也同样生成
-
-### 多个容器数据共享
-
-【视频书签：https://www.bilibili.com/video/BV1og4y1q7M4?p=25，周日下午，滨江，大雨，本来说这周六刷完的，发现周六啥也干不下去，除了吃就是睡，要么发呆研究小金库】
-
-![image-20200621165403842](Docker.assets/image-20200621165403842.png)
-
-看一下有啥images
-
-![image-20200621165733780](Docker.assets/image-20200621165733780.png)
-
-启动docker01，用之前建的padaxing/centos 1.0  镜像
-
-```shell
-docker run -it --name docker01 padaxing/centos:1.0 # 1.0必须写
 ```
 
-![image-20200621170429658](Docker.assets/image-20200621170429658.png)
 
 
+![image-20200618220658979](Docker.assets/WX20220425-235001.png)
 
-当前这个ctrl+p+q不停止退出
 
-![image-20200621170540593](Docker.assets/image-20200621170540593.png)
-
-依次启动docker02、docker03
-
-```shell
-docker run -it --name docker02 --volumes-from docker01 padaxing/centos:1.0
-```
-
-docker02继承docker01的volumes
-
-可以验证，在docker01下加一个数据，在docker02下也会出现
-
-![image-20200621171513650](Docker.assets/image-20200621171513650.png)
-
-创建docker03，同样继承docker01
-
-```shell
-docker run -it --name docker03 --volumes-from docker01 padaxing/centos:1.0
-```
-
-![image-20200621172333639](Docker.assets/image-20200621172333639.png)
-
-在docker03的volume01下建立文件，在docker01的volume01下同样也有
-
-即通过--volumes-from 可以实现不同容器间的数据共享
-
-删除docker01，数据还在
-
-```shell
-docker rm -f 
-```
-
-![image-20200621172830779](Docker.assets/image-20200621172830779.png)
-
-可以看到，删除docker01，进入docker02，数据依然在
-
-结论：
-
-容器之间配置信息的传递，数据卷容器的生命周期一直持续到没有容器使用位置
-
-但是如果持久化到了本地，即使所有容器删除了，本地数据是不会删除的
-
-------
-
-## DockerFile
-
-是用来构建docker镜像的文件，可以理解为命令参数脚本
 
 构建步骤：
 
 1. 编写一个dockerfile文件
 2. docker build 构建成为一个镜像
 3. docker run运行镜像
-4. docker push 发布镜像（DockerHub、阿里云镜像仓库 私有/共有）
-
-这个写一个项目时一样的
+4. docker push 发布镜像
 
 ### 官方DockerFile示例
 
@@ -1249,9 +1082,9 @@ docker rm -f
 
 ![image-20200621174204807](Docker.assets/image-20200621174204807.png)
 
-可以看到官方镜像都是基础包，很多功能没有，我们通常会自己搭建自己的镜像
+可以看到官方镜像都是基础包，很多功能没有，可以己搭建自己的镜像
 
-官方既然可以制作镜像，我们亦可以
+
 
 -----
 
@@ -1272,9 +1105,7 @@ Docker镜像逐渐成为企业的交付标准，必须掌握！
 
 ### DockerFile命令
 
-![æ¥çæºå¾å](http://www.yunweipai.com/wp-content/uploads/2016/09/171.jpg)
 
-### 
 
 ```shell
 FROM # 基础镜像 比如centos
@@ -1292,169 +1123,46 @@ COPY # 将文件拷贝到镜像中
 ENV # 构建的时候设置环境变量
 ```
 
-### 实战构建自己的centos
-
-Docker Hub中99%的镜像都是从FROM scratch开始的
-
-添加centos7的压缩包
-
-```shell
-# 创建一个自己的centos
-
-# 进入home目录
-cd /home
-
-# 创建一个目录，之后的东西都保存到这里
-mkdir dockerfile
-# 进入这个目录
-cd dockerfile/
-# 创建一个dockerfile，名字叫mydockerfile
-vim mydockerfile-centos
-
-
-```
-
-xshell新开一个界面
-
-```shell
-# 官方默认centos
-docker run -it centos
-pwd # 官方默认有pwd命令
-vim # 官方默认没有vim命令
-ifconfig # 官方默认没有ifconfig命令
-```
-
-![image-20200621184333206](Docker.assets/image-20200621184333206.png)
-
-回到mydockerfile
-
-![image-20200621184847524](Docker.assets/image-20200621184847524.png)
-
-```shell
-# 下面给官方centos加上自定义的内容
-FROM centos
-MAINTAINER padaxing<010301200@hai.com>
-
-ENV MYPATH /usr/local
-WORKDIR $MYPATH
-
-RUN yum -y install vim
-RUN yum -y install net-tools
-
-EXPOSE 80
-
-CMD echo $MYPATH
-CMD echo "---end---"
-CMD /bin/bash
-```
-
-![image-20200621185539523](Docker.assets/image-20200621185539523.png)
-
-ESC, shif + : 输入wq保存并退出
-
-如果写错了需要修改、
-
-```shell
-vim mydockerfile-centos
-# 进入之后按i或者INSERT键即可修改
-```
 
 
 
-下面通过这个这个文件创建镜像
 
-```shell
-docker build -f dockerfile-centos -t mycentos:0.1 .
-```
 
-![image-20200621190219978](Docker.assets/image-20200621190219978.png)
 
-依次执行命令
 
-![image-20200621190439448](Docker.assets/image-20200621190439448.png)
 
-最终返回Successfully表示成功
 
-![image-20200621190524848](Docker.assets/image-20200621190524848.png)
 
-```shell
-docker run -it mycentos:0.1 # 版本号必须写，不然他会去找最新的
-pwd
-vim
-ifconfig
-```
 
-![image-20200621190812481](Docker.assets/image-20200621190812481.png)
 
-这时可以看到这些功能都有了
 
-可以通过查看docker构建历史
 
-![image-20200621192103460](Docker.assets/image-20200621192103460.png)
 
-可以看到当前这个镜像是怎么一步一步构建起来的
 
-我们平时拿到一个镜像也可以通过这个方法研究一下他是怎么做的
 
-### CMD与ENTRYPOINT
 
-【视频书签，https://www.bilibili.com/video/BV1og4y1q7M4?p=29，雨终于停了，想去江边跑步】
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 ```shell
 
-FROM centos
-CMD ["ls","-a"] # 启动centos展示目录
-```
-
-![image-20200622075427103](Docker.assets/image-20200622075427103.png)
-
-测试ENTRYPOINT
-
-![image-20200622075653789](Docker.assets/image-20200622075653789.png)
-
-run的时候可以直接加命令
-
-![image-20200622075802180](Docker.assets/image-20200622075802180.png)
-
-Docker中许多命令都十分相似，我们需要了解他们的区别，最好的方式就是这样对比测试
-
----
-
-### 实战Tomcat镜像
-
-【视频书签，https://www.bilibili.com/video/BV1og4y1q7M4?p=30，这节有点长，这个jar包是哪来的，晚上再搞，先去该模型比较急，还有10节课，这周争取都看完】
-
-1. 准备镜像文件 tomcat压缩包
-2. 
-
-## IDEA整合Docker
-
-## Docker 整合Docker
-
-## Docker Compose
-
-## Docker Swarm
-
-## 各种bug
-
-### Xshell链接失败
-
-![image-20200616200418271](Docker.assets/image-20200616200418271.png)
-
-```bash
-Connecting to 192.168.147.131:22...
-Could not connect to '192.168.147.131' (port 22): Connection failed.
-
 ```
 
 
-
-注：电脑休眠重启后，机子会断开，要重新在vmware里面输入ip addr 获得ip
-
-![image-20200616200344918](Docker.assets/image-20200616200344918.png)
-
-修改xshell中的主机接口即可
-
-![image-20200616200505065](Docker.assets/image-20200616200505065.png
-
-![image-20200624101454866](Docker.assets/image-20200624101454866.png)
